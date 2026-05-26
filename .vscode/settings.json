@@ -22,5 +22,6 @@
     }
   ],
   "latex-workshop.latex.outDir": "%DIR%/pdf",
-  "latex-workshop.latex.auxDir": "%DIR%/.aux-files"
+  "latex-workshop.latex.auxDir": "%DIR%/.aux-files",
+  "latex-workshop.message.warning.show": false
 }
