@@ -7,9 +7,6 @@
         "-synctex=1",
         "-interaction=nonstopmode",
         "-file-line-error",
-        "-pdf",
-        "-auxdir=.aux-files",
-        "-outdir=pdf",
         "%DOC%"
       ],
       "env": {}
@@ -21,7 +18,12 @@
       "tools": ["latexmk"]
     }
   ],
-  "latex-workshop.latex.outDir": "%DIR%/pdf",
+  "latex-workshop.latex.outDir": "%DIR%/.aux-files",
   "latex-workshop.latex.auxDir": "%DIR%/.aux-files",
-  "latex-workshop.message.warning.show": false
+  "latex-workshop.message.latexlog.exclude": [
+    "Please \\(re\\)run Biber",
+    "Please rerun LaTeX",
+    "There were undefined references",
+    "Empty bibliography"
+  ]
 }
