@@ -1,0 +1,29 @@
+{
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk",
+      "tools": ["latexmk"]
+    }
+  ],
+  "latex-workshop.latex.outDir": "%DIR%/.aux-files",
+  "latex-workshop.latex.auxDir": "%DIR%/.aux-files",
+  "latex-workshop.message.latexlog.exclude": [
+    "Please \\(re\\)run Biber",
+    "Please rerun LaTeX",
+    "There were undefined references",
+    "Empty bibliography"
+  ]
+}
