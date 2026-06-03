@@ -12,6 +12,7 @@ print(f'Port: {port}')
 lock = threading.Lock()
 
 def start_new_thread(x,y):
+    #falsch
     thread = threading.Thread(target=x,args=y)
     thread.start()
 
