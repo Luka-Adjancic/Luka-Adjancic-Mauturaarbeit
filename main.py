@@ -11,8 +11,9 @@ print(f'IP: {ip}')
 print(f'Port: {port}')
 lock = threading.Lock()
 
-def start_new_thread():
-    #?
+def start_new_thread(x,y):
+    thread = threading.Thread(target=x,args=y)
+    thread.start()
 
 def client_handler(client):
     while True:
@@ -30,13 +31,12 @@ def main():
         server.bind((hostname, port))
         # Three-way-handshake
         server.listen(5)
-        client, address = server.accept()
-        with client:
+        
+        while True:
+            client, address = server.accept()
             print(f"Connected by {address}")
-            while True:
-                lock.acquire()
-                print('Connected to:', address[0], ':', address[1])
-                start_new_thread(client_handler, (client,))
+            lock.acquire()
+            start_new_thread(client_handler, (client,))
 
 if __name__ == '__main__':
-   main()
+    main()
