@@ -8,17 +8,21 @@ print(f'Hostname: {hostname}')
 print(f'IP: {ip}')
 print(f'Port: {port}')
 
-# Server
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
-    server.bind((hostname, port))
-    # Three-way-handshake
-    server.listen()
-    client, address = server.accept()
-    with client:
-        print(f"Connected by {address}")
-        while True:
-            data = client.recv(1024)
-            if not data:
-                break
-            # schickt es zurück
-            client.sendall(data)
+def main():
+    # Server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.bind((hostname, port))
+        # Three-way-handshake
+        server.listen()
+        client, address = server.accept()
+        with client:
+            print(f"Connected by {address}")
+            while True:
+                data = client.recv(1024)
+                if not data:
+                 break
+                # schickt es zurück
+                client.sendall(data)
+
+if __name__ == '__main__':
+   main()
