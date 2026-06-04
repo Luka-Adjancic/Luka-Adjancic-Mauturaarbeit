@@ -3,6 +3,8 @@ import socket
 # Variablen
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
+# IP adress damit sich andere im lokalem Netzwerk verbinden können
+exip = '192.168.1.23'
 port = 7367
 print(f'Hostname: {hostname}-2')
 print(f'IP: {ip}')
@@ -14,7 +16,7 @@ def main():
     # Server-Connection
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         # Three-way-handshake
-        server.connect((hostname, port))
+        server.connect((exip, port))
         #message = "hey"
         while True:
             message = input()

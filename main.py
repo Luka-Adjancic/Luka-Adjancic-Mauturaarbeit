@@ -9,19 +9,17 @@ port = 7367
 print(f'Hostname: {hostname}')
 print(f'IP: {ip}')
 print(f'Port: {port}')
-#lock = threading.Lock()
 
 #def start_new_thread(x,y):
     #falsch
     
-
+# nimmt Daten eines Senders und schickt sie umgekehrt zurück
 def client_handler(client):
     while True:
         data = client.recv(1024)
         if not data:
             raddr = client.getpeername()
             print(f'Bye {raddr}')
-            #lock.release()
             break
         client.sendall(data[::-1])
     client.close()
@@ -36,7 +34,7 @@ def main():
             # Three-way-handshake
             client, address = server.accept()
             print(f"Connected by {address}")
-            #lock.acquire()
+            # erstellt für jeden client einen Thread wo parallel arbeitet
             thread = threading.Thread(target=client_handler,args=(client,))
             thread.start()
             #start_new_thread(client_handler, (client,))
