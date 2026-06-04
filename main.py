@@ -31,6 +31,7 @@ def main():
         server.listen(5)
         
         while True:
+            time.sleep(15)
             # Three-way-handshake
             client, address = server.accept()
             print(f"Connected by {address}")
