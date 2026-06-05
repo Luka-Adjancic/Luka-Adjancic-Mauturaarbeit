@@ -1,5 +1,4 @@
 import socket
-import textwrap
 import tkinter
 from tkinter import *
 from tkinter import ttk
@@ -17,10 +16,11 @@ print(f'Write a Message:')
 #message = input()
 
 root = Tk()
-frm = ttk.Frame(root, padding=10)
+frm = ttk.Frame(root, padding=10, height=700, width=800)
 frm.grid()
-ttk.Label(frm, text="Hello World!").grid(column=0, row=0)
-ttk.Button(frm, text="Quit", command=root.destroy).grid(column=1, row=0)
+ttk.Label(frm, text="Simple Messenger").grid(column=0, row=0)
+entry = ttk.Entry(frm, ).grid(column=0, row=1)
+ttk.Button(frm, text="Send",).grid(column=1, row=1)
 root.mainloop()
 
 def main():
