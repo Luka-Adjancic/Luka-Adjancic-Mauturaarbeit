@@ -17,8 +17,8 @@ print(f'Port: {port}')
 def client_handler(client):
     while True:
         data = client.recv(1024)
+        raddr = client.getpeername()
         if not data:
-            raddr = client.getpeername()
             print(f'Bye {raddr}')
             break
         client.sendall(data[::-1])
@@ -29,12 +29,13 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         server.bind((hostname, port))
         server.listen(5)
-        
+        client_connections = {}
         while True:
             time.sleep(15)
             # Three-way-handshake
             client, address = server.accept()
             print(f"Connected by {address}")
+            client_connections[address] = client
             # erstellt für jeden client einen Thread wo parallel arbeitet
             thread = threading.Thread(target=client_handler,args=(client,))
             thread.start()
