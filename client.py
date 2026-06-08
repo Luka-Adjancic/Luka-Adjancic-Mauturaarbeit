@@ -28,17 +28,22 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         # Three-way-handshake
         server.connect((exip, port))
-        #message = "hey"
+        server_message = "hey"
         while True:
-            message = input()
-            server.send(message.encode('ascii'))
-            data = server.recv(1024)
-            print('Received from server:', data.decode('ascii'))
+            request = input('Do you want to connect with users (y/n): ')
+            if request.lower() == 'y':
+                server.send(server_message.encode('ascii'))
+                response = server.recv(1024)
+                print(f'Server responded with: {response.decode(ascii)}')
+                message = input(f'Choose a connection: {connections.decode('ascii')}')
+                server.send(message.encode('ascii'))
+            #data = server.recv(1024)
+            #print('connected to:', data.decode('ascii'))
 
-            answer = input('Do you want to continue (y/n): ')
-            if answer.lower() != 'y':
-                break
-        server.close()
+            #answer = input('Do you want to continue (y/n): ')
+            #if answer.lower() != 'y':
+                #break
+        #server.close()
         # b"" konvertiert es zu Bytes
         # b zu .encode geändert damit ich input var benutzten kann
         #server.sendall(f"{message}".encode("UTF-8"))

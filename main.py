@@ -10,18 +10,22 @@ print(f'Hostname: {hostname}')
 print(f'IP: {ip}')
 print(f'Port: {port}')
 
-#def start_new_thread(x,y):
-    #falsch
+#def start_new_connection(client_connections, client):
+    #client_connections
+        
     
-# nimmt Daten eines Senders und schickt sie umgekehrt zurück
-def client_handler(client):
+# nimmt Daten
+def client_handler(client, client_connections):
     while True:
         data = client.recv(1024)
+        data = f'{data.decode('ascii')}' + ' Back'
+        data = data.encode('ascii')
         raddr = client.getpeername()
+        print(f'{data}')
         if not data:
             print(f'Bye {raddr}')
             break
-        client.sendall(data[::-1])
+
     client.close()
    
 def main():
@@ -31,14 +35,17 @@ def main():
         server.listen(5)
         client_connections = {}
         while True:
-            time.sleep(15)
             # Three-way-handshake
             client, address = server.accept()
             print(f"Connected by {address}")
-            client_connections[address] = client
+            client_connections[address] = client.getpeername()
+            print(f"All possible connections: {client_connections}")
             # erstellt für jeden client einen Thread wo parallel arbeitet
-            thread = threading.Thread(target=client_handler,args=(client,))
+            thread = threading.Thread(target=client_handler,args=(client, client_connections))
+            #thread2 = threading.Thread(target=start_new_connection,args=(client_connections, client))
             thread.start()
+            #thread2.start()
+            time.sleep(15)
             #start_new_thread(client_handler, (client,))
 
 if __name__ == '__main__':
