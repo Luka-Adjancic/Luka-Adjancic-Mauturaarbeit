@@ -28,7 +28,7 @@ print("'LIST' for Users that are connected and 'adress:message' to chat with a u
 def receive_messages(client_data):
     while True:
         try:
-            data = client_data.recv(1024)
+            data = client_data.recv(1024).decode('ascii')
             if data:
                 print(f"\nIncoming {data}\nMessage or 'List': ", end="")
         

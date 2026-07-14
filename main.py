@@ -16,18 +16,39 @@ print(f'Port: {port}')
     
 # nimmt Daten
 def client_handler(client, address, client_connections):
-    while True:
-        data = client.recv(1024)
-        data = data.encode('ascii')
-        if not data:
-            print(f'Bye {address}')
-            break
-        
+    try:
+        while True:
+            data = client.recv(1024)
+            data = data.decode('ascii')
+            if not data:
+                print(f'Bye {address}')
+                break
+            
+            if data == 'GET_LIST':
+                users = [str(x) for x in client_connections.keys()if x != address]
+                client.send(f"Connected Users: {','.join(users)}".encode('ascii'))
+
+            elif ':' in data:
+                target_address, message = data.split(':', 1)
+
+                found = False
+                for conn_address, conn in client_connections.items():
+                    if str(conn_address) == target_address:
+                        conn.send(f"Message from {address}: {message}".encode('ascii'))
+                        found = True
+                        break
+                if not found:
+                    client.send("User not found.".encode('ascii'))
+
+    except Exception as e:
+        print(f"Error handling client {address}: {e}")
+    finally:
+        print(f"Bye {address}")
+        del client_connections[address]
+        client.close()
         #raddr = client.getpeername()
         #print(f'{data}')
         
-
-    client.close()
    
 def main():
     # Server
