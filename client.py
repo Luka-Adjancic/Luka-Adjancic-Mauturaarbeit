@@ -13,7 +13,7 @@ port = 7367
 print(f'Hostname: {hostname}-2')
 print(f'IP: {ip}')
 print(f'Port: {port}')
-print(f'Write a Message:')
+print("'LIST' for Users that are connected and 'adress:message' to chat with a user")
 #message = input()
 
 #root = Tk()
@@ -24,9 +24,16 @@ print(f'Write a Message:')
 #ttk.Button(frm, text="Send",).grid(column=1, row=1)
 #root.mainloop()
 
+# Nachricht empfangen
 def receive_messages(client_data):
     while True:
+        try:
+            data = client_data.recv(1024)
+            if data:
+                print(f"\nIncoming {data}\nMessage or 'List': ", end="")
         
+        except:
+            break
 
 def main():
     # Server-Connection
@@ -34,18 +41,28 @@ def main():
         # Three-way-handshake
         server.connect((ip, port))
         
-        receiver_thread = threading.Thread()
+        # client thread für Verbindungen
+        receiver_thread = threading.Thread(target=receive_messages, args=(server,), daemon=True)
+        receiver_thread.start()
 
         while True:
             
-            server.sendall(server_message.encode('ascii'))
+            message = input("Choose a connection or get 'LIST': ")
+            
+            if message.lower() == 'list':
+                server.send("GET_LIST".encode('ascii'))
+            elif message.lower() == 'exit':
+                break
+            else:
+                server.send(message.encode('ascii'))
+                
             #request = input('Do you want to connect with users (y/n): ')
-            #if request.lower() == 'y':
+            
                 #server.sendall(server_message.encode('ascii'))
                 #response = server.recv(1024)
                 #print(f'Server responded with: {response.decode(ascii)}')
-                #message = input(f'Choose a connection: {connections.decode('ascii')}')
-                #server.send(message.encode('ascii'))
+            
+                
             #else:
                 #break
             #data = server.recv(1024)
@@ -54,7 +71,7 @@ def main():
             #answer = input('Do you want to continue (y/n): ')
             #if answer.lower() != 'y':
                 #break
-    server.close()
+    #server.close()
         # b"" konvertiert es zu Bytes
         # b zu .encode geändert damit ich input var benutzten kann
         #server.sendall(f"{message}".encode("UTF-8"))
