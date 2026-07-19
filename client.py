@@ -1,6 +1,6 @@
 import socket
 import threading
-
+from gui import send
 
 # Variablen
 hostname = socket.gethostname()
@@ -38,7 +38,7 @@ def main():
 
         while True:
             
-            message = input("Choose a connection or get 'LIST': ")
+            message = input(send)
             
             if message.lower() == 'list':
                 server.send("GET_LIST".encode('ascii'))

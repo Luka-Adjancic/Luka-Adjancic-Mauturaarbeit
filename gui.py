@@ -3,37 +3,62 @@ from tkinter import *
 from tkinter import ttk
 
 root = tk.Tk()
-root.title("Widgets Demo")
+root.title("Chat Box")
 
-widgets = [
-    tk.Label,
-    tk.Checkbutton,
-    ttk.Combobox,
-    tk.Entry,
-    tk.Button,
-    tk.Radiobutton,
-    tk.Scale,
-    tk.Spinbox,
-]
+#widgets = [
+    #tk.Label,
+    #ttk.Combobox,
+    #tk.Entry, 
+    #tk.Button,
+#]
 
-for widget in widgets:
-    try:
-        widget = widget(root, text=widget.__name__)
-    except tk.TclError:
-        widget = widget(root)
-    widget.pack(padx=5, pady=5, fill="x")
+def get_list():
+    send = 'list'
+    return send
+
+button2 = tk.Button(
+    root,
+    text="Get List",
+    command=get_list,
+)
+button2.pack(padx=5, pady=5)
+
+combobox = ttk.Combobox(root, values=[])
+combobox.set("")
+combobox.pack(padx=5, pady=5, fill="x")
+
+entry = tk.Entry(root)
+entry.pack(padx=5, pady=5, fill="x")
+
+def erase(event=None):
+    if entry.get() == 'Type here...':
+        entry.delete(0,'end')
+def add(event=None):
+    if entry.get() == '':
+        entry.insert(0, 'Type here...')
+
+add()
+entry.bind("<FocusIn>", erase)
+entry.bind("<FocusOut>", add)
+
+def send():
+    send = entry.get() + combobox.get()
+    return send
+
+button = tk.Button(
+    root,
+    text="Send",
+    command=send,
+)
+button.pack(padx=5, pady=5)
+
+
+#for widget in widgets:
+    #try:
+        #widget = widget(root, text=widget.__name__)
+    #except tk.TclError:
+        #widget = widget(root)
+    #widget.pack(padx=5, pady=5, fill="x")
 
 root.mainloop()
 
-#window = tk.Tk()
-#window.title("Hello World")
-
-#def handle_button_press(event):
-    #window.destroy()
-
-#button = tk.Button(text="My simple app.")
-#button.bind("", handle_button_press)
-#button.pack()
-
-# Start the event loop.
-#window.mainloop()
