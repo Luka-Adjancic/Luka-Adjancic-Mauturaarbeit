@@ -14,7 +14,7 @@ root.title("Chat Box")
 
 def get_list():
     send = 'list'
-    return send
+    print(send)
 
 button2 = tk.Button(
     root,
@@ -23,7 +23,7 @@ button2 = tk.Button(
 )
 button2.pack(padx=5, pady=5)
 
-combobox = ttk.Combobox(root, values=[])
+combobox = ttk.Combobox(root, values=[1, 2, 3, 4, 5])
 combobox.set("")
 combobox.pack(padx=5, pady=5, fill="x")
 
@@ -42,9 +42,8 @@ entry.bind("<FocusIn>", erase)
 entry.bind("<FocusOut>", add)
 
 def send():
-    send = entry.get() + combobox.get()
-    return send
-
+    send = combobox.get() + ": " + entry.get()
+    print(send)
 button = tk.Button(
     root,
     text="Send",

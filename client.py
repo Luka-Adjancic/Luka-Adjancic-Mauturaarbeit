@@ -1,6 +1,9 @@
 import socket
 import threading
-from gui import send
+import tkinter as tk
+from tkinter import *
+from tkinter import ttk
+
 
 # Variablen
 hostname = socket.gethostname()
@@ -12,7 +15,57 @@ print(f'Hostname: {hostname}-2')
 print(f'IP: {ip}')
 print(f'Port: {port}')
 print("'LIST' for Users that are connected and 'adress:message' to chat with a user")
-#message = input()
+message = ''
+button_is_pressed = False
+
+def window():
+    root = tk.Tk()
+    root.title("Chat Box")
+
+    def get_list():
+        button_is_pressed
+        button_is_pressed = True
+        message
+        message = 'list'
+        return message, button_is_pressed
+    
+    
+    button2 = tk.Button(
+        root,
+        text="Get List",
+        command=get_list,
+    )
+    button2.pack(padx=5, pady=5)
+
+    combobox = ttk.Combobox(root, values=[1, 2, 3, 4, 5])
+    combobox.set("")
+    combobox.pack(padx=5, pady=5, fill="x")
+
+    entry = tk.Entry(root)
+    entry.pack(padx=5, pady=5, fill="x")
+
+    def erase(event=None):
+        if entry.get() == 'Type here...':
+            entry.delete(0,'end')
+    def add(event=None):
+        if entry.get() == '':
+            entry.insert(0, 'Type here...')
+
+    add()
+    entry.bind("<FocusIn>", erase)
+    entry.bind("<FocusOut>", add)
+
+    def send():
+        send = combobox.get() + ": " + entry.get()
+        print(send)
+    button = tk.Button(
+        root,
+        text="Send",
+        command=send,
+    )
+    button.pack(padx=5, pady=5)
+
+    root.mainloop()
 
 
 # Nachricht empfangen
@@ -36,16 +89,25 @@ def main():
         receiver_thread = threading.Thread(target=receive_messages, args=(server,), daemon=True)
         receiver_thread.start()
 
+        window_thread = threading.Thread(target=window, daemon=True)
+        window_thread.start()
+
         while True:
-            
-            message = input(send)
-            
-            if message.lower() == 'list':
-                server.send("GET_LIST".encode('ascii'))
-            elif message.lower() == 'exit':
-                break
-            else:
-                server.send(message.encode('ascii'))
+
+            while button_is_pressed == True:
+                
+                #message = input('Message or "List": ')
+                
+                if message.lower() == 'list':
+                    server.send("GET_LIST".encode('ascii'))
+                    button_is_pressed = False
+                    return button_is_pressed
+                elif message.lower() == 'exit':
+                    break
+                else:
+                    server.send(message.encode('ascii'))
+                    button_is_pressed = False
+                    return button_is_pressed
                 
             #request = input('Do you want to connect with users (y/n): ')
             
