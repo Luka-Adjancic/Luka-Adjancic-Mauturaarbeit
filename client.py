@@ -17,8 +17,8 @@ print(f'IP: {ip}')
 print(f'Port: {port}')
 print("'LIST' for Users that are connected and 'adress:message' to chat with a user")
 
-users = []
-notification = ''
+#user_list = []
+#notification = ''
 
 #def window():
     
@@ -32,8 +32,9 @@ def receive_messages(client_data):
             if ":" in data:
                 notification = data.split(":", 1)[1]
             elif data:
-                users = data.split(",")
-                print(f"{users}")
+                global user_list
+                user_list = data.split('),(')
+                combobox['values'] = user_list
 
             
         
@@ -61,6 +62,7 @@ def main():
 
             def get_list():
                 server.send("GET_LIST".encode('ascii'))
+                print("Requesting user list...")
             
             
             button2 = tk.Button(
@@ -69,8 +71,10 @@ def main():
                 command=get_list,
             )
             button2.pack(padx=5, pady=5)
+            global combobox
+            
 
-            combobox = ttk.Combobox(root, values=[users])
+            combobox = ttk.Combobox(root, values=[])
             combobox.set("")
             combobox.pack(padx=5, pady=5, fill="x")
 

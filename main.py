@@ -26,7 +26,7 @@ def client_handler(client, address, client_connections):
             
             if data == 'GET_LIST':
                 users = [str(x) for x in client_connections.keys()if x != address]
-                client.send(f"Connected Users: {','.join(users)}".encode('ascii'))
+                client.send(f"{','.join(users)}".encode('ascii'))
 
             elif ':' in data:
                 target_address, message = data.split(':', 1)
