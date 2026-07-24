@@ -31,9 +31,12 @@ def receive_messages(client_data):
             data = client_data.recv(1024).decode('ascii')
             if ":" in data:
                 notification = data.split(":", 1)[1]
+                chat_box.config(state="normal")
+                chat_box.insert("end", f"Received: {notification}\n")
+                chat_box.config(state="disabled")
             elif data:
-                global user_list
                 user_list = data.split('),(')
+                user_list = [user.strip('()') for user in user_list]
                 combobox['values'] = user_list
 
             
@@ -60,9 +63,19 @@ def main():
             root = tk.Tk()
             root.title("Chat Box")
 
+            global chat_box
+
+            chat_box = tk.Text(
+                root,
+                height=10,
+                width=50,
+                state="disabled",
+            )
+            chat_box.pack(padx=5, pady=5, fill="both", expand=True)
+            
+
             def get_list():
                 server.send("GET_LIST".encode('ascii'))
-                print("Requesting user list...")
             
             
             button2 = tk.Button(
@@ -71,15 +84,19 @@ def main():
                 command=get_list,
             )
             button2.pack(padx=5, pady=5)
+
             global combobox
             
-
-            combobox = ttk.Combobox(root, values=[])
+            combobox = ttk.Combobox(
+                root,
+                values=[],
+                state="readonly",
+            )
             combobox.set("")
             combobox.pack(padx=5, pady=5, fill="x")
 
             entry = tk.Entry(root)
-            entry.pack(padx=5, pady=5, fill="x")
+            entry.pack(padx=5, pady=5, side="left", fill="x", expand=True)
 
             def erase(event=None):
                 if entry.get() == 'Type here...':
@@ -93,14 +110,18 @@ def main():
             entry.bind("<FocusOut>", add)
 
             def send():
-                message = combobox.get() + ": " + entry.get() 
+                message = "(" + combobox.get() + ")" + ": " + entry.get()
                 server.send(message.encode('ascii'))
+                chat_box.config(state="normal")
+                chat_box.insert("end", f"Sent: {message}\n")
+                chat_box.config(state="disabled")
+
             button = tk.Button(
                 root,
                 text="Send",
                 command=send,
             )
-            button.pack(padx=5, pady=5)
+            button.pack(padx=5, pady=5, side="right")
 
             def popup():
                 popup = askyesno(title="Annoying Popup", message="Are you sure you want to exit?")
