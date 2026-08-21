@@ -10,7 +10,7 @@ from tkinter.messagebox import askyesno
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 # IP adress damit sich andere im lokalem Netzwerk verbinden können
-exip = '192.168.1.23'
+exip = '192.168.1.104'
 port = 7367
 print(f'Hostname: {hostname}-2')
 print(f'IP: {ip}')
@@ -65,6 +65,12 @@ def main():
 
             global chat_box
 
+            ipLabel = tk.Label(
+                root,
+                text=f"Connected to {hostname} ({ip}) on port {port}",
+            )
+            ipLabel.pack(padx=5, pady=5)
+
             chat_box = tk.Text(
                 root,
                 height=10,
@@ -95,8 +101,11 @@ def main():
             combobox.set("")
             combobox.pack(padx=5, pady=5, fill="x")
 
-            entry = tk.Entry(root)
+            entry = tk.Entry(
+                root,
+            )
             entry.pack(padx=5, pady=5, side="left", fill="x", expand=True)
+            entry.bind("<Return>", lambda event: send())
 
             def erase(event=None):
                 if entry.get() == 'Type here...':
@@ -115,6 +124,10 @@ def main():
                 chat_box.config(state="normal")
                 chat_box.insert("end", f"Sent: {message}\n")
                 chat_box.config(state="disabled")
+                entry.delete(0, 'end')
+                root.focus_set()
+
+
 
             button = tk.Button(
                 root,
