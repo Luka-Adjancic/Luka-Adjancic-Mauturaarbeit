@@ -120,6 +120,8 @@ def main():
 
             def send():
                 message = "(" + combobox.get() + ")" + ": " + entry.get()
+                buffer_size = len(message.encode('ascii'))
+                server.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, buffer_size)
                 server.send(message.encode('ascii'))
                 chat_box.config(state="normal")
                 chat_box.insert("end", f"Sent: {message}\n")

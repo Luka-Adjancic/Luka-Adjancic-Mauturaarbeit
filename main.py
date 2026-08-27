@@ -5,7 +5,10 @@ import threading
 # Variablen
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
+local = '0.0.0.0'
 port = 7367
+SEND_BUF_SIZE = 4096 
+RECV_BUF_SIZE = 4096
 print(f'Hostname: {hostname}')
 print(f'IP: {ip}')
 print(f'Port: {port}')
@@ -53,7 +56,23 @@ def client_handler(client, address, client_connections):
 def main():
     # Server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
-        server.bind((hostname, port))
+        server.bind((local, port))
+        bufsize = server.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF) 
+        print ("Buffer size [Before]:%d" %bufsize) 
+            
+        server.setsockopt(socket.SOL_TCP, 
+                            socket.TCP_NODELAY, 1) 
+        server.setsockopt( 
+                    socket.SOL_SOCKET, 
+                    socket.SO_SNDBUF, 
+                    SEND_BUF_SIZE) 
+        server.setsockopt( 
+                    socket.SOL_SOCKET, 
+                    socket.SO_RCVBUF, 
+                    RECV_BUF_SIZE) 
+        bufsize = server.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF) 
+        print ("Buffer size [After]:%d" %bufsize)
+
         server.listen(5)
         client_connections = {}
         while True:
