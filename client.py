@@ -4,7 +4,16 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import askyesno
+from AES_Python import AES
 
+# Initialize the AES object
+aes = AES(r_mode="ECB", key="Password1234")
+
+# Encrypt the data
+#encrypted_data = aes.enc("your-data")
+
+# Decrypt the data
+#decrypted_data = aes.dec("your-encrypted-data")
 
 # Variablen
 hostname = socket.gethostname()
@@ -120,9 +129,8 @@ def main():
 
             def send():
                 message = "(" + combobox.get() + ")" + ": " + entry.get()
-                buffer_size = len(message.encode('ascii'))
-                server.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, buffer_size)
-                server.send(message.encode('ascii'))
+                enc_message = aes.enc(message)
+                print(enc_message)
                 chat_box.config(state="normal")
                 chat_box.insert("end", f"Sent: {message}\n")
                 chat_box.config(state="disabled")
