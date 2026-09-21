@@ -4,16 +4,12 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import askyesno
-from AES_Python import AES
+from Crypto.Cipher import AES
 
-# Initialize the AES object
-aes = AES(r_mode="ECB", key="Password1234")
+# Sehr sicherer Schlüssel
+key = b'Password12345678'
 
-# Encrypt the data
-#encrypted_data = aes.enc("your-data")
 
-# Decrypt the data
-#decrypted_data = aes.dec("your-encrypted-data")
 
 # Variablen
 hostname = socket.gethostname()
@@ -36,17 +32,27 @@ print("'LIST' for Users that are connected and 'adress:message' to chat with a u
 # Nachricht empfangen
 def receive_messages(client_data):
     while True:
+        nonce = client_data.recv(16)
+        tag = client_data.recv(16)
+        ciphertext = client_data.recv(1024)
+        cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
+        plaintext = cipher.decrypt(ciphertext)
         try:
-            data = client_data.recv(1024).decode('ascii')
-            if ":" in data:
-                notification = data.split(":", 1)[1]
-                chat_box.config(state="normal")
-                chat_box.insert("end", f"Received: {notification}\n")
-                chat_box.config(state="disabled")
-            elif data:
-                user_list = data.split('),(')
-                user_list = [user.strip('()') for user in user_list]
-                combobox['values'] = user_list
+            cipher.verify(tag)
+            print("The message is authentic:", plaintext)
+            try:
+                data = plaintext.decode('ascii')
+                if ":" in data:
+                    notification = data.split(":", 1)[1]
+                    chat_box.config(state="normal")
+                    chat_box.insert("end", f"Received: {notification}\n")
+                    chat_box.config(state="disabled")
+                elif data:
+                    user_list = data.split('),(')
+                    user_list = [user.strip('()') for user in user_list]
+                    combobox['values'] = user_list
+            except ValueError:
+                print("Key incorrect or message corrupted")
 
             
         
@@ -128,9 +134,21 @@ def main():
             entry.bind("<FocusOut>", add)
 
             def send():
-                message = "(" + combobox.get() + ")" + ": " + entry.get()
-                enc_message = aes.enc(message)
-                print(enc_message)
+                # message = "(" + combobox.get() + ")" + ": " + entry.get()
+                message = entry.get()
+                portDst = int(combobox.get().split(',')[1])
+                ipDst1 = combobox.get().split(',')[0].split('.')[0]
+                ipDst2 = combobox.get().split(',')[0].split('.')[1]
+                ipDst3 = combobox.get().split(',')[0].split('.')[2]
+                ipDst4 = combobox.get().split(',')[0].split('.')[3]
+                ipDst = bytes([int(ipDst1), int(ipDst2), int(ipDst3), int(ipDst4)])
+                # Einmalige Nummer
+                cipher = AES.new(key, AES.MODE_EAX)
+                nonce = cipher.nonce
+                ciphertext, tag = cipher.encrypt_and_digest(message.encode('ascii'))
+                print(ciphertext)
+                # data = message.encode('ascii')
+                server.sendall(bytes(ipDst) + bytes(portDst) + bytes(nonce) + bytes(tag) + bytes(ciphertext))
                 chat_box.config(state="normal")
                 chat_box.insert("end", f"Sent: {message}\n")
                 chat_box.config(state="disabled")
