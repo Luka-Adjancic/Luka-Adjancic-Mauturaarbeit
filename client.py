@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import askyesno
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 
 # Sehr sicherer Schlüssel
 key = b'Password12345678'
@@ -26,37 +26,89 @@ print("'LIST' for Users that are connected and 'adress:message' to chat with a u
 #notification = ''
 
 #def window():
-    
 
+def construct_message(ip, port, tag, nonce, ciphertext):
+
+    ip = socket.inet_aton(ip)
+    port = int(port).to_bytes(2, byteorder='big')
+
+    #erster Byte ist 0x1 als indicator für die Art der Nachricht
+    packet = bytes([0x1])
+    packet += ip
+    packet += port
+    packet += tag
+    packet += nonce
+    packet += ciphertext
+
+    return packet
+
+def cipher_message(message, key):
+    cipher = AES.new(key, AES.MODE_EAX)
+    nonce = cipher.nonce
+    ciphertext, tag = cipher.encrypt_and_digest(message.encode('utf-8'))
+    return tag, nonce, ciphertext
+    
+def decipher_message(key, tag, nonce, ciphertext):
+    try:
+        cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
+        plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+        return plaintext
+    except ValueError:
+        print("Key incorrect or message corrupted")
+        return None
 
 # Nachricht empfangen
 def receive_messages(client_data):
     while True:
-        nonce = client_data.recv(16)
-        tag = client_data.recv(16)
-        ciphertext = client_data.recv(1024)
-        cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
-        plaintext = cipher.decrypt(ciphertext)
+        #nonce = client_data.recv(16)
+        #tag = client_data.recv(16)
+        #ciphertext = client_data.recv(1024)
+        #cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
+        #plaintext = cipher.decrypt(ciphertext)
         try:
-            cipher.verify(tag)
-            print("The message is authentic:", plaintext)
-            try:
-                data = plaintext.decode('ascii')
-                if ":" in data:
-                    notification = data.split(":", 1)[1]
+            data = client_data.recv(1024)
+
+            if not data:
+                break
+            #cipher.verify(tag)
+            #print("The message is authentic:", plaintext)
+            #try:
+                #data = plaintext.decode('ascii')
+            type_indicator = data[0]
+
+            if type_indicator == 0x1:
+                tag = data[7:23]
+                nonce = data[23:39]
+                ciphertext = data[39:]
+                plaintext = decipher_message(key, tag, nonce, ciphertext)
+                if plaintext:
+                    notification = plaintext.decode('utf-8')
                     chat_box.config(state="normal")
                     chat_box.insert("end", f"Received: {notification}\n")
                     chat_box.config(state="disabled")
-                elif data:
-                    user_list = data.split('),(')
-                    user_list = [user.strip('()') for user in user_list]
-                    combobox['values'] = user_list
-            except ValueError:
-                print("Key incorrect or message corrupted")
 
-            
-        
-        except:
+            elif type_indicator == 0x0:
+                user_list = []
+                actual_data = data[1:]
+                # immer 6 bytes fuer ein ip und port paar
+                for i in range(0, len(actual_data), 6):
+                    header = actual_data[i : i + 6]
+                    if len(header) < 6:
+                        break
+                
+                    user_ip = socket.inet_ntoa(header[0:4])
+                    user_port = int.from_bytes(header[4:6], byteorder="big")
+                    user_list.append(f"{user_ip},{user_port}")
+                
+                combobox["values"] = user_list
+                if user_list:
+                    combobox.current(0)
+
+            #except ValueError:
+                #print("Key incorrect or message corrupted")
+
+        except Exception as e:
+            print(f"receive message Error: {e}")
             break
 
 def main():
@@ -96,7 +148,7 @@ def main():
             
 
             def get_list():
-                server.send("GET_LIST".encode('ascii'))
+                server.send(bytes([0x0]))
             
             
             button2 = tk.Button(
@@ -136,19 +188,13 @@ def main():
             def send():
                 # message = "(" + combobox.get() + ")" + ": " + entry.get()
                 message = entry.get()
-                portDst = int(combobox.get().split(',')[1])
-                ipDst1 = combobox.get().split(',')[0].split('.')[0]
-                ipDst2 = combobox.get().split(',')[0].split('.')[1]
-                ipDst3 = combobox.get().split(',')[0].split('.')[2]
-                ipDst4 = combobox.get().split(',')[0].split('.')[3]
-                ipDst = bytes([int(ipDst1), int(ipDst2), int(ipDst3), int(ipDst4)])
-                # Einmalige Nummer
-                cipher = AES.new(key, AES.MODE_EAX)
-                nonce = cipher.nonce
-                ciphertext, tag = cipher.encrypt_and_digest(message.encode('ascii'))
-                print(ciphertext)
+                tag, nonce, ciphertext = cipher_message(message, key)
+                #portDst = int(combobox.get().split(',')[1])
+                ip, port = combobox.get().split(',')
                 # data = message.encode('ascii')
-                server.sendall(bytes(ipDst) + bytes(portDst) + bytes(nonce) + bytes(tag) + bytes(ciphertext))
+                packet = construct_message(ip, port, tag, nonce, ciphertext)
+                #server.sendall(bytes(ipDst) + bytes(portDst) + bytes(nonce) + bytes(tag) + bytes(ciphertext))
+                server.sendall(packet)
                 chat_box.config(state="normal")
                 chat_box.insert("end", f"Sent: {message}\n")
                 chat_box.config(state="disabled")
