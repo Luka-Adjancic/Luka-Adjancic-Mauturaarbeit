@@ -1,0 +1,22 @@
+[project]
+name = "luka-adjancic-mauturaarbeit"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Luka-Adjancic", email = "e236879@edu.sbl.ch" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "customtkinter>=6.0.0",
+    "latexminted>=0.7.1",
+    "pycryptodomex>=3.23.0",
+    "pygments>=2.21.0",
+]
+
+[project.scripts]
+luka-adjancic-mauturaarbeit = "luka_adjancic_mauturaarbeit:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"

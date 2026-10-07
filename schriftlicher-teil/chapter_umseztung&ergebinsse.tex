@@ -1,0 +1,62 @@
+\chapter{Umsetzung und Ergebnisse}
+\label{chap:Umsetzung und Ergebnisse}
+
+\section{Umsetzung}
+
+\subsection{Server Side}
+
+Das Projekt begonnen, habe ich mit einer main.py Datei. Diese wurde am ende die Server Datei, wie unten vorgeführt. Ihre Aufgabe war Anfangs sich mit einem Nutzer zu verbinden und alle Nachrichten zu evaluieren und zurückschicken. Indem es einen Socket an die Server IP und den festgelegten Port 7367 gebunden hat. Dann hörte dieser Socket auf anfragen mit einem server.listen() nach einer Verbindung, das sogenannte "Three-Way-Handshake" server.accept() und empfängt Daten des Nutzers mit dem client.rec(1024). Zum schluss schickt es diese Daten zurück mit dem client.sendall(data). Das .sendall() stellt sicher das alle Daten ankommen also TCP, wenn man ein .send() benutzt geht es zwar schneller aber Daten könnten verloren gehen, weil es das UDP Prinzip benutzt.
+
+\begin{minted}{python}
+import socket
+
+# Variablen
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
+port = 7367
+print(f'Hostname: {hostname}')
+print(f'IP: {ip}')
+print(f'Port: {port}')
+
+# Server
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+    server.bind((hostname, port))
+    # Three-way-handshake
+    server.listen()
+    client, address = server.accept()
+    with client:
+        print(f"Connected by {address}")
+        while True:
+            data = client.recv(1024)
+            if not data:
+                break
+            # schickt es zurück
+            client.sendall(data)
+\end{minted}
+
+Als nächstes machte ich eine client.py Datei, welche der Nutzer selbst braucht um mit dem Server zu kommunizieren. 
+\begin{minted}{python}
+import socket
+
+# Variablen
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
+port = 7367
+print(f'Hostname: {hostname}-2')
+print(f'IP: {ip}')
+print(f'Port: {port}')
+
+# Server
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+    # Three-way-handshake
+    server.connect((hostname, port))
+    # b"" konvertiert es zu Bytes
+    server.sendall(b"Test")
+    data = server.recv(1024)
+
+# !r = repr() Rohe Daten
+print(f"Received {data!r}")
+\end{minted}
+\subsection{Client Smintedide}
+
+\section{Ergebnisse}

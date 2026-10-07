@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import askyesno
+import customtkinter as ctk
 from Cryptodome.Cipher import AES
 
 # Sehr sicherer Schlüssel
@@ -79,9 +80,9 @@ def receive_messages(client_data):
                 plaintext = decipher_message(key, tag, nonce, ciphertext)
                 if plaintext:
                     notification = plaintext.decode("utf-8")
-                    chat_box.config(state="normal")
+                    chat_box.configure(state="normal")
                     chat_box.insert("end", f"Received: {notification}\n")
-                    chat_box.config(state="disabled")
+                    chat_box.configure(state="disabled")
 
             # Wenn der erste Byte 0 ist, wird es als Liste gelesen
             elif type_indicator == 0x0:
@@ -98,9 +99,15 @@ def receive_messages(client_data):
                     user_list.append(f"{user_ip},{user_port}")
 
                 # Stellt die Liste im UI zur Verfügung und wählt den ersten Client aus der Liste automatisch schon aus
-                combobox["values"] = user_list
+                combobox.configure(values=user_list)
                 if user_list:
-                    combobox.current(0)
+                    combobox.set(user_list[0])
+
+            elif type_indicator == 0x2:
+                print("Error: User not found.")
+                chat_box.configure(state="normal")
+                chat_box.insert("end", "Error: User not found.\n")
+                chat_box.configure(state="disabled")
 
         # Als Error Versicherung da
         except Exception as e:
@@ -124,23 +131,23 @@ def main():
         while True:
 
             # UI Elemente
-            root = tk.Tk()
+            root = ctk.CTk()
             root.title("Chat Box")
 
             global chat_box
 
-            ipLabel = tk.Label(
+            ipLabel = ctk.CTkLabel(
                 root,
                 text=f"Connected to {hostname} ({ip}) on port {port}",
             )
             ipLabel.pack(padx=5, pady=5)
-            clientLabel = tk.Label(
+            clientLabel = ctk.CTkLabel(
                 root,
                 text=f"Your device info: ({client_ip}, {client_port})",
             )
             clientLabel.pack(padx=5, pady=5)
 
-            chat_box = tk.Text(
+            chat_box = ctk.CTkTextbox(
                 root,
                 height=10,
                 width=50,
@@ -151,7 +158,7 @@ def main():
             def get_list():
                 server.send(bytes([0x0]))
 
-            button2 = tk.Button(
+            button2 = ctk.CTkButton(
                 root,
                 text="Get List",
                 command=get_list,
@@ -160,7 +167,7 @@ def main():
 
             global combobox
 
-            combobox = ttk.Combobox(
+            combobox = ctk.CTkComboBox(
                 root,
                 values=[],
                 state="readonly",
@@ -168,8 +175,9 @@ def main():
             combobox.set("")
             combobox.pack(padx=5, pady=5, fill="x")
 
-            entry = tk.Entry(
+            entry = ctk.CTkEntry(
                 root,
+                placeholder_text="Type here..."
             )
             entry.pack(padx=5, pady=5, side="left", fill="x", expand=True)
             entry.bind("<Return>", lambda event: send())
@@ -196,13 +204,13 @@ def main():
                 packet = construct_message(ip, port, tag, nonce, ciphertext)
 
                 server.sendall(packet)
-                chat_box.config(state="normal")
+                chat_box.configure(state="normal")
                 chat_box.insert("end", f"Sent: {message}\n")
-                chat_box.config(state="disabled")
+                chat_box.configure(state="disabled")
                 entry.delete(0, "end")
                 root.focus_set()
 
-            button = tk.Button(
+            button = ctk.CTkButton(
                 root,
                 text="Send",
                 command=send,

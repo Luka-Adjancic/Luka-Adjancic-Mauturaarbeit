@@ -24,7 +24,6 @@ def client_handler(client, address, client_connections):
             if type_indicator == 0x0:
                 # Erstellt eine Liste aus allen verfügbaren Clients und entfernt den Client der diese beantragt hat
                 users = [addr for addr in client_connections.keys() if addr != address]
-                print(users)
                 user_list = bytes([0x0])
                 for user_ip, user_port in users:
                     ip_bytes = socket.inet_aton(user_ip)
@@ -47,9 +46,10 @@ def client_handler(client, address, client_connections):
                         conn.sendall(data)
                         found = True
                         break
-                    if not found:
-                        # Sicherheitsmassnahme sollte dieser Benutzter nicht existieren
-                        print(f"User {target_address} not found.")
+                if not found:
+                    # Sicherheitsmassnahme sollte dieser Benutzter nicht existieren
+                    print(f"User {target_address} not found.")
+                    client.sendall(bytes([0x2]))  # Schickt Error Nachricht
 
             if not data:
                 print(f"Bye {address}")

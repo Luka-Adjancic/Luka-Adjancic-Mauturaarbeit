@@ -9,7 +9,7 @@
 \pgfkeys{
   /gymmureport/.cd,
   class/.store in   = \gmuclass,
-  class              = 1A,
+  class              = 4AM,
   school/.store in   = \gmuschool,
   school             = Gymnasium Muttenz,
   bibstyle/.store in = \gymmureport@bibstyle,
@@ -41,6 +41,8 @@
 \RequirePackage{fancyhdr}
 \RequirePackage[ngerman]{babel}
 \RequirePackage{csquotes}
+\RequirePackage{minted2}
+\setminted{breaklines=true, encoding=utf8}
 \ifgymmureport@draft
   \RequirePackage[plainpages=false,pdfpagelabels,final]{hyperref}
 \else
@@ -49,6 +51,7 @@
 \RequirePackage{graphicx}
 \RequirePackage{caption}
 \RequirePackage{float}
+
 
 % Verwende todonotes für Notizen am Rand.
 % Im Draft-Modus werden sie angezeigt, sonst ausgeblendet.
@@ -152,4 +155,16 @@
   \fancyfoot[L]{\gmu@author}%
   \fancyfoot[R]{\gmuschool}%
   \renewcommand{\headrulewidth}{0pt}%
+}
+
+\RequirePackage{minted2}
+
+% Globale Einstellungen für alle Python-Codeblöcke
+\setminted[python]{
+    linenos=true,             % Zeilennummern links
+    fontsize=\small,          % Angenehme Schriftgrösse
+    frame=lines,              % Linien ober- und unterhalb des Blocks
+    framesep=2mm,             % Abstand zu den Linien
+    breaklines=true,          % Automatische Zeilenumbrüche bei langen Zeilen
+    encoding=utf8             % Volle Unterstützung für ä, ö, ü
 }

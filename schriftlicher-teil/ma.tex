@@ -1,39 +1,49 @@
-\documentclass[class=4Z,draft]{gymmureport}
+\documentclass[class=4AM,draft]{gymmureport}
 % Für die Finale version, einfach das "draft" oben entfernen.
 
 \addbibresource{bibliography.bib}
 
 
-\title{Maturarbeit}
+\title{Messenger Software - Verschlüsselte Kommunikation im lokalen Netzwerk oder Server}
 \author{Luka Adjancic}
-\date{\today}
+\date{12.10.2026}
+
+
 
 \begin{document}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{picture-lib/titel-image.png}
+\end{figure}
 \maketitle
 
 \begin{abstract}
-    In meiner Maturaarbeit befasse ich mich mit Netzwerkprotokollen und deren Implementierung mithilfe einer einfachen Messenger Software. 
+    In meiner Maturaarbeit befasse ich mich mit Netzwerkprotokollen und ihrer Umsetzung in einer einfachen Messenger-Software. Die Software verschlüsselt ihre Nachrichten mit dem AES-Verfahren, dessen Berechnungen auf Matrizen beruhen.
 \end{abstract}
 
 \tableofcontents
 
+\input{chapter_vorwort}
 
-\chapter{Einführung}
+\input{chapter_einleitung}
 
-Hier kommt die Einführung.\todo{Einführung noch ausformulieren} Der Text hier
-sollte eigentlich noch viel länger sein, so das hier nicht so merkwürdige
-Umbrüche entstehen.
+\input{chapter_theorie}
 
-Ich kann weitere Kapitel auch importieren.
+\input{chapter_konz&methodik}
 
-\input{chapter_methode.tex}
+\input{chapter_umseztung&ergebinsse}
 
-\section{Etwas mit Quellen}
+\input{chapter_schlussfolgerung}
 
-Wenn ich eine Quelle zitieren möchte, kann ich das ganze einfach am Ende des
-Satzes machen \citep{ai-wikipedia}. Oder wie gesagt, auch mitten im Text.
+\input{chapter_schlusswort}
 
-\printbibliography
+\input{chapter_verzeichnisse}
+
+\input{chapter_anhang}
+
+\input{chapter_redlichkeitserklärung}
+
+
 
 \end{document}
