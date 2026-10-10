@@ -41,8 +41,6 @@
 \RequirePackage{fancyhdr}
 \RequirePackage[ngerman]{babel}
 \RequirePackage{csquotes}
-\RequirePackage{minted2}
-\setminted{breaklines=true, encoding=utf8}
 \ifgymmureport@draft
   \RequirePackage[plainpages=false,pdfpagelabels,final]{hyperref}
 \else
@@ -122,14 +120,65 @@
 % Speichere den Autornamen, da \@author nach \maketitle zurückgesetzt wird.
 % Verwende ausserdem \pagenumbering{Alph} für die Titelseite, damit hyperref
 % keine doppelten Seitenziele (page.1) erzeugt.
+
 \newcommand{\gmu@author}{}
-\let\gmu@origmaketitle\maketitle
+\newcommand{\gmu@subtitle}{}
+\newcommand{\gmu@klasse}{}
+\newcommand{\gmu@advisor}{}
+\newcommand{\gmu@titleimage}{}
+\newcommand{\subtitle}[1]{\renewcommand{\gmu@subtitle}{#1}}
+\newcommand{\klasse}[1]{\renewcommand{\gmu@klasse}{#1}}
+\newcommand{\advisor}[1]{\renewcommand{\gmu@advisor}{#1}}
+\newcommand{\titleimage}[1]{\renewcommand{\gmu@titleimage}{#1}}
+
 \renewcommand{\maketitle}{%
   \global\let\gmu@author\@author
-  \pagenumbering{Alph}%
-  \gmu@origmaketitle
-  \thispagestyle{empty}%  Titelseite: keine Kopf-/Fusszeilen
-  \pagenumbering{arabic}%
+  \begin{titlepage}
+    \pagenumbering{Alph}
+    \thispagestyle{empty}
+    \centering
+    
+
+    {\scshape\Large Gymnasium Muttenz \par}
+    \vspace{0.4cm}
+    {\large Maturaarbeit \par}
+
+    \hrulefill
+    
+    \vspace{1.2cm}
+
+    {\huge\bfseries \@title \par}
+    \ifx\gmu@subtitle\@empty\else
+      \vspace{0.4cm}
+      {\large\itshape \gmu@subtitle \par}
+    \fi
+    
+    \vspace{1.0cm}
+    
+
+    \ifx\gmu@titleimage\@empty\else
+      \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.65\textwidth]{\gmu@titleimage}
+        \caption{Titelbild der Maturaarbeit \cite{royalty-free-stock-illustration}.}
+      \end{figure}
+    \fi
+    
+    \vfill
+    
+    \begin{tabular}{ll}
+      \textbf{Verfasser:}        & \@author \\
+      \ifx\gmu@klasse\@empty\else
+        \textbf{Klasse:}         & \gmu@klasse \\
+      \fi
+      \ifx\gmu@advisor\@empty\else
+        \textbf{Betreuungsperson:} & \gmu@advisor \\
+      \fi
+      \textbf{Datum:}            & \@date \\
+    \end{tabular}
+    \par
+  \end{titlepage}
+  \pagenumbering{arabic}
 }
 
 % Verwende fancyhdr um Kopf- und Fusszeilen zu erstellen.
@@ -155,16 +204,4 @@
   \fancyfoot[L]{\gmu@author}%
   \fancyfoot[R]{\gmuschool}%
   \renewcommand{\headrulewidth}{0pt}%
-}
-
-\RequirePackage{minted2}
-
-% Globale Einstellungen für alle Python-Codeblöcke
-\setminted[python]{
-    linenos=true,             % Zeilennummern links
-    fontsize=\small,          % Angenehme Schriftgrösse
-    frame=lines,              % Linien ober- und unterhalb des Blocks
-    framesep=2mm,             % Abstand zu den Linien
-    breaklines=true,          % Automatische Zeilenumbrüche bei langen Zeilen
-    encoding=utf8             % Volle Unterstützung für ä, ö, ü
 }

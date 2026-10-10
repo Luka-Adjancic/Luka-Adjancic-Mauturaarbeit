@@ -182,18 +182,6 @@ def main():
             entry.pack(padx=5, pady=5, side="left", fill="x", expand=True)
             entry.bind("<Return>", lambda event: send())
 
-            def erase(event=None):
-                if entry.get() == "Type here...":
-                    entry.delete(0, "end")
-
-            def add(event=None):
-                if entry.get() == "":
-                    entry.insert(0, "Type here...")
-
-            add()
-            entry.bind("<FocusIn>", erase)
-            entry.bind("<FocusOut>", add)
-
             def send():
 
                 message = entry.get()

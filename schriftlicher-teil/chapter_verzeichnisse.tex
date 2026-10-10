@@ -1,9 +1,30 @@
 \chapter{Verzeichnisse}
 \label{chap:Verzeichnisse}
 
-\section{Etwas mit Quellen}
+\nocite{*}
+\printbibliography[heading=subbibnumbered]
 
-Wenn ich eine Quelle zitieren möchte, kann ich das ganze einfach am Ende des
-Satzes machen \citep{ai-wikipedia}. Oder wie gesagt, auch mitten im Text.
+\section{\listfigurename}
+\begingroup
+\makeatletter
+\renewcommand{\chapter}[2]{}
+\makeatother
+\listoffigures
+\endgroup
 
-\printbibliography
+\section{\listtablename}
+\begingroup
+\makeatletter
+\renewcommand{\chapter}{\@ifstar\@gobble\@gobble}
+\makeatother
+\listoftables
+\endgroup
+
+\section{Hilfsmittel}
+
+Für die Arbeit habe ich folgende Hilfsmittel eingesetzt:
+\begin{description}
+\item[Claude Sonnet 5.5 (Antigravity)] Sprachliche Überarbeitung und Rechtschreibkorrektur der von mir selbst verfassten Texte, Hinweise auf fachliche Fehler, Formulierung der Glossareinträge sowie Hinweise zu den Quellenangaben. Die Inhalte, der Programmcode und die Argumentation habe ich selbst erarbeitet. Prompt (Auszug): "kannst du mit den Ressourcen die zur Verfügung gestellt sind bitte diesen Text so korrigieren, dass er etwas professioneller klingt und immer noch menschlich klingt."
+\item[Zotero und BibTeX] Verwaltung der Quellen.
+\item[Git und GitHub] Versionskontrolle und Arbeitsjournal.
+\end{description}
